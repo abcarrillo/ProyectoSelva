@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>La jungla de Tarzan</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <style>
+        .visible {
+            display: inline;
+        }
+
+        .invisible {
+            display: none;
+        }
+    </style>
+</head>
+
+<body id="body" class="p-2">
+
+    <div class="row mb-5">
+        <canvas class="col-6" id="selva" height="1280px" width="1768px"></canvas>
+
+        <div class="row p-5">
+            <form class="col-5 border p-4" id="form_a">
+                <fieldset>
+                    <h5>Marcador y Control del Juego</h5>
+                    <label id="puntos"></label>
+                    <button id="btn_simular" type="button">Simular</button>
+                    <button id="btn_reinicio" type="button">Reinicio</button>
+                </fieldset>
+            </form>
+
+            <form class="col-5 border p-4 overflow-auto" id="form_b">
+                <fieldset>
+                    <h5>Estado inicial</h5>
+
+                    <input id="rango_limite" type="range" value="19" min="0" max="40" required />
+                    <label id="num_range"></label>
+
+                    <br>
+                    <label>PLANTAS</label><br>
+                    <input type="number" name="num_plantas" value="3" id="num_plantas" required />
+                    <br>
+                    <label>HERB(H)</label><br>
+                    <input type="number" name="num_herb_h" value="3" id="num_herb_h" required />
+                    <br>
+                    <label>HERB(M)</label><br>
+                    <input type="number" name="num_herb_m" value="3" id="num_herb_m" required />
+                    <br>
+                    <label>CARN(H)</label><br>
+                    <input type="number" name="num_carn_h" value="0" id="num_carn_h" required />
+                    <br>
+                    <label>CARN(M)</label><br>
+                    <input type="number" name="num_carn_m" value="0" id="num_carn_m" required />
+                </fieldset>
+            </form>
+
+            <form class="col-10 border p-4" id="form_c">
+                <fieldset>
+                    <h5>Nacer / Morir</h5>
+                    <div class="row border border-dark">
+                        <strong class="col-2">PLANTAS</strong>
+                        <button class="offset-4 col-1 btn btn-outline-success" id="masPlanta" type="button">+</button>
+                        <button class="col-1 btn btn-outline-success" id="menosPlanta" type="button">-</button>
+                    </div>
+                    <div class="row border border-dark">
+                        <strong class="col-2">HERBÍVOROS</strong>
+                        MACHO<input type="radio" name="sexo_herb" value="M">
+                        <label class="offset-1">HEMBRA</label><input type="radio" name="sexo_herb" value="H"> <br>
+                        <button class="offset-1 col-1 btn btn-outline-success" id="masHerbivoro"
+                            type="button">+</button>
+                        <button class="col-1 btn btn-outline-success" id="menosHerbivoro" type="button">-</button>
+                    </div>
+                    <div class="row border border-dark">
+                        <strong class="col-2">CARNÍVOROS</strong>
+                        MACHO<input type="radio" name="sexo_carn" value="M">
+                        <label class="offset-1">HEMBRA</label><input type="radio" name="sexo_carn" value="H"> <br>
+                        <button class="offset-1 col-1 btn btn-outline-success" id="masCarnivoro"
+                            type="button">+</button>
+                        <button class="col-1 btn btn-outline-success" id="menosCarnivoro" type="button">-</button>
+                    </div>
+                </fieldset>
+            </form>
+
+
+            <form class="col-10 border p-4" id="form_d">
+                <fieldset>
+                    <h5>Tiempo de simulacion / Velocidad</h5>
+                    <div>
+                        <label>Tiempo de simulacion: </label>
+                        <label id="tiempo_sim"></label>
+                    </div>
+                    <div>
+                        <label>Tiempo real: </label>
+                        <label id="tiempo_real"></label>
+                    </div>
+                </fieldset>
+
+
+            </form>
+
+
+            <form class="col-10 border p-4" id="form_e">
+                <table class="table text-center">
+                    <thead>
+                        <tr>
+                            <td>STATS</td>
+                            <th>Vivos</th>
+                            <th>Muertos</th>
+                            <th>Iniciales*</th>
+                            <th>Nuevos*</th>
+                            <th>Masa media</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Plantas</td>
+                            <td id="stat_vivos_plant">0</td>
+                            <td id="stat_muertos_plant">0</td>
+                            <td id="stat_iniciales_plant">0</td>
+                            <td id="stat_nuevos_plant">0</td>
+                            <td id="stat_masa_plant">0</td>
+                        </tr>
+                        <tr>
+                            <td>Herbivoros</td>
+                            <td id="stat_vivos_herb">0</td>
+                            <td id="stat_muertos_herb">0</td>
+                            <td id="stat_iniciales_herb">0</td>
+                            <td id="stat_nuevos_herb">0</td>
+                            <td id="stat_masa_herb">0</td>
+                        </tr>
+
+                        <tr>
+                            <td>Carnivoros</td>
+                            <td id="stat_vivos_carn">0</td>
+                            <td id="stat_muertos_carn">0</td>
+                            <td id="stat_iniciales_carn">0</td>
+                            <td id="stat_nuevos_carn">0</td>
+                            <td id="stat_masa_carn">0</td>
+                        </tr>
+
+
+                        <tr>
+                            <td>TOTALES</td>
+                            <td id="stat_vivos_total">0</td>
+                            <td id="stat_muertos_total">0</td>
+                            <td id="stat_iniciales_total">0</td>
+                            <td id="stat_nuevos_total">0</td>
+                            <td id="stat_masa_total">0</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </form>
+
+
+            <form class="col-10 border p-4" id="form_f">
+                <fieldset>
+                    <label>MASA MAXIMA</label>
+                    <input id="max_masa" type="number" min="10" max="50" value="45"> <br>
+                    <label>MINIMO MASA</label>
+                    <input id="min_masa" type="number" min="5" max="20" value="5"> <br>
+                    <label>MASA INICIAL</label>
+                    <input id="masa_inicial" type="number" min="10" max="30" value="20"> <br>
+                    <label>RATIO CRECIMIENTO PLANTAS</label>
+                    <input id="ratio_planta" type="number" min="0.1" max="0.3" step="0.05" value="0.23"> <br>
+                    <label>PORCENTAJE ALIMENTO CARNIVORO</label>
+                    <input id="porcentaje" type="number" min="0.2" max="0.9" step="0.1" value="0.5">
+                </fieldset>
+            </form>
+
+            <form class="col-10 border p-4" id="form_g">
+                <fieldset>
+                    <strong>Fosiles</strong>
+                    <button type="button" id="add_campo_fosil">+</button>
+                </fieldset>
+
+                <div id="campos_fosiles">
+
+                </div>
+            </form>
+
+            <form class="col-10 border p-4" id="form_g_2">
+                <fieldset>
+                    <strong>Registro(log)</strong>
+                    <div style="height: 200px; overflow-y: auto;">
+                        <ul id="registro">
+                        </ul>
+                    </div>
+                    Errores<input type="checkbox" name="ch_errores" id="ch_errores" checked> <br>
+                    Avisos <input type="checkbox" name="ch_avisos" id="ch_avisos" checked> <br>
+                    Info <input type="checkbox" name="ch_info" id="ch_info" checked>
+                </fieldset>
+            </form>
+
+            <form class="col-10 border p-4" id="form_i">
+                <fieldset>
+                    <strong>Guardar / Cargar configuracion</strong> <br>
+
+                </fieldset>
+            </form>
+
+
+            <form class="col-10 border p-4" id="form_j">
+                <fieldset>
+                    <strong>Guardar / Cargar configuracion</strong> <br>
+
+                </fieldset>
+            </form>
+
+
+
+            <form class="col-10 border p-4" id="form_k">
+                <fieldset>
+                    <strong>URL de Configuracion</strong> <br>
+                    <label>URL:</label>
+                    <input type="text" class="form-control" name="url" id="url" placeholder="URL">
+                    <button type="button" id="cargar_url">Cargar</button>
+                    <button type="button" id="ver_url">Ver</button>
+
+                    <ul id="params">
+
+                    </ul>
+                </fieldset>
+            </form>
+
+
+
+            <form class="col-10 border p-4" id="form_l">
+                <fieldset>
+                    <strong>Guardar / Cargar estado de la aplicacion</strong> <br>
+                    <textarea name="json" id="json" cols="80" rows="10"></textarea>
+                </fieldset>
+                <button type="button" id="export_json">Exportar</button>
+                <button type="button" id="clean_json">Limpiar</button>
+            </form>
+        </div>
+
+    </div>
+
+
+
+
+
+
+
+
+    <script defer src="clases.js">
+
+    </script>
+
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
+    </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+    </script>
+    <script defer src="https://use.fontawesome.com/releases/v5.1.1/js/all.js"
+        integrity="sha384-BtvRZcyfv4r0x/phJt9Y9HhnN5ur1Z+kZbKVgzVBAlQZX4jvAuImlIz+bG7TS00a" crossorigin="anonymous">
+    </script>
+
+</body>
+
+</html>
